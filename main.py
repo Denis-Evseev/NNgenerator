@@ -3,13 +3,15 @@ from keras.layers import *
 
 time_delays = 2
 
-inputA = np.array([[-1,  1, -1,  1, -1,  1,-1, -1,-1, -1]], dtype=float)
-inputB = np.array([[ 1, -1, -1, -1, -1, -1, 1, -1, 1, -1]], dtype=float)
-inputC = np.array([[-1, -1,  1,  1,  1,  1, 1,  1, 1, -1]], dtype=float)
-inputD = np.array([[-1, -1, -1, -1,  1,  1, 1, -1,-1, -1]], dtype=float)
+input_arrA = np.array([[-1,  1, -1,  1, -1,  1,-1, -1,-1, -1]], dtype=float).reshape((10, 1))
+input_arrB = np.array([[ 1, -1, -1, -1, -1, -1, 1, -1, 1, -1]], dtype=float).reshape((10, 1))
+input_arrC = np.array([[-1, -1,  1,  1,  1,  1, 1,  1, 1, -1]], dtype=float).reshape((10, 1))
+input_arrF = np.array([[-1, -1, -1, -1,  1,  1, 1, -1,-1, -1]], dtype=float).reshape((10, 1))
 
-targetA = np.array([[-1,  1,  1, 1, 1, 1,  1,  1, -1, -1]], dtype=float)
-targetB = np.array([[-1, -1, -1, 1, 1, 1, -1, -1, -1, -1]], dtype=float)
+target = np.array([[-1, -1, 1, -1, 1, -1, 1, 1, 1, 1,
+                     1, 1, 1, -1, 1, -1, -1, -1, -1, -1]], dtype=float).reshape((10, 2))
+
+print(target)
 
 inputA = Input((1,))
 inputB = Input((1,))
@@ -40,8 +42,9 @@ for i in range(time_delays):
 
 finalOut = Concatenate()([outA, outB])
 model = Model(inputs=[inputA, inputB, inputC, inputF], outputs=finalOut)
-
+print(model.layers[0].set_weights([[2]]))
+print(model.layers[0].get_weights())
 model.compile(loss='mean_absolute_error', optimizer='adam')
-model.fit([[inputA,inputB,inputC,inputD]], [[targetA,targetB]], epochs=5000, batch_size=1, verbose=2)
+model.fit([input_arrA, input_arrB, input_arrC, input_arrF], target, epochs=5000, batch_size=1, verbose=2)
 # validation_data=(x_test, y_test)
 predict = model.predict(data)
